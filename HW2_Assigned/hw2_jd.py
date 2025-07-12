@@ -20,10 +20,9 @@ spotify = {
     10: {"artists": ["Lady Gaga"], "title": "Abracadabra", "length": "3:43"}
 }
 
-
 user_choice_question = "Enter what you would like to browse:\n \
                         \t1: A list of artists in the top 10 most played songs\n \
-                        \t2: Song by ranking\n \
+                        \t2: Song details by ranking\n \
                         \t3: Songs by an artist\n \
                         \t4: Songs ordered by length\n \
                         \t0: Exit\n"
@@ -37,3 +36,46 @@ artist_error = "No songs were found by "
 
 length_question = "Enter a number to view songs by length. (Positive: longest songs, Negative: shortest songs): "
 length_value_error = "Invalid vallue. Please enter a number."
+
+def list_artists():
+    artists = set()
+    for entry in spotify.values(): 
+        for artist in entry["artists"]: 
+            artists.add(artist) 
+
+    print(', '.join(sorted(list(artists))))
+
+def song_by_ranking():
+    pass
+
+def songs_by_artist():
+    pass
+
+def songs_by_length():
+    pass
+
+def main():
+
+    exit_flag = False
+    
+    while not exit_flag:
+
+        selection = int(input(user_choice_question))
+        
+        if selection == 1:
+            list_artists()
+        elif selection == 2:
+            song_by_ranking()
+        elif selection == 3:
+            songs_by_artist()
+        elif selection == 4:
+            songs_by_length()
+        elif selection == 0:
+            exit_flag = True
+        else:
+            continue
+
+
+if __name__ == "__main__":
+    main()
+
