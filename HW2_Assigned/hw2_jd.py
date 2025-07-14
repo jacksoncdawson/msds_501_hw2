@@ -56,11 +56,15 @@ def songs_by_length():
 
 def main():
 
-    exit_flag = False
+    exit = False
     
-    while not exit_flag:
+    while not exit:
 
-        selection = int(input(user_choice_question))
+        # Input (Validation)
+        try:
+            selection = int(input(user_choice_question).strip())
+        except ValueError:
+            continue
         
         if selection == 1:
             list_artists()
@@ -71,7 +75,7 @@ def main():
         elif selection == 4:
             songs_by_length()
         elif selection == 0:
-            exit_flag = True
+            exit = True
         else:
             continue
 
