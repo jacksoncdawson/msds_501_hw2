@@ -43,7 +43,7 @@ def list_artists():
         for artist in entry["artists"]: 
             artists.add(artist) 
 
-    print(', '.join(sorted(list(artists))))
+    return ', '.join(sorted(list(artists)))
 
 def song_by_ranking():
     pass
@@ -67,7 +67,7 @@ def main():
             continue
         
         if selection == 1:
-            list_artists()
+            print(list_artists())
         elif selection == 2:
             song_by_ranking()
         elif selection == 3:
