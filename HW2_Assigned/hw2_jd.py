@@ -46,7 +46,24 @@ def list_artists():
     return ', '.join(sorted(list(artists)))
 
 def song_by_ranking():
-    pass
+    request = input(ranking_question)
+    
+    # validate input
+    try:
+        request = int(request)
+    except TypeError:
+        print(ranking_value_error)
+        return
+        
+    if (request > 10) or (request < 1):
+        print(ranking_range_error)
+        return
+    
+    entry = spotify[request]
+    artists = ', '.join(entry["artists"])
+    title = entry["title"]
+
+    return f'{request}: {title} by {artists}'
 
 def songs_by_artist():
     pass
@@ -69,7 +86,7 @@ def main():
         if selection == 1:
             print(list_artists())
         elif selection == 2:
-            song_by_ranking()
+            print(song_by_ranking())
         elif selection == 3:
             songs_by_artist()
         elif selection == 4:
@@ -80,6 +97,6 @@ def main():
             continue
 
 
-if __name__ == "__main__":
-    main()
+# Run Here
+main()
 
