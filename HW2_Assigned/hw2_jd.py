@@ -51,7 +51,7 @@ def song_by_ranking():
     # validate input
     try:
         request = int(request)
-    except TypeError:
+    except ValueError:
         print(ranking_value_error)
         return
         
@@ -66,7 +66,18 @@ def song_by_ranking():
     return f'{request}: {title} by {artists}'
 
 def songs_by_artist():
-    pass
+    request = input(artist_question).lower()
+    songs = {}
+    for i in spotify:
+        entry = spotify[i]
+        for artist in entry["artists"]:
+            if artist.lower() == request:
+                songs[i] = entry["title"]
+                
+    if len(songs) == 0:
+        return artist_error + request.strip().title()
+    else:
+        return '\n'.join(f"{rank}: {title}" for rank, title in songs.items())
 
 def songs_by_length():
     pass
@@ -88,7 +99,7 @@ def main():
         elif selection == 2:
             print(song_by_ranking())
         elif selection == 3:
-            songs_by_artist()
+            print(songs_by_artist())
         elif selection == 4:
             songs_by_length()
         elif selection == 0:
