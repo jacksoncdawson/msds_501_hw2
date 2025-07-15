@@ -46,18 +46,15 @@ def list_artists():
     return ', '.join(sorted(list(artists)))
 
 def song_by_ranking():
-    request = input(ranking_question)
     
-    # validate input
+    # Input (Validation)
     try:
-        request = int(request)
+        request = int(input(ranking_question).strip())
     except ValueError:
-        print(ranking_value_error)
-        return
+        return ranking_value_error
         
     if (request > 10) or (request < 1):
-        print(ranking_range_error)
-        return
+        return ranking_range_error
     
     entry = spotify[request]
     artists = ', '.join(entry["artists"])
@@ -80,7 +77,33 @@ def songs_by_artist():
         return '\n'.join(f"{rank}: {title}" for rank, title in songs.items())
 
 def songs_by_length():
-    pass
+
+    # Input (Validation)
+    try:
+        request = int(input(length_question).strip())
+    except ValueError:
+        return length_value_error
+    
+    entries = []
+    for entry in spotify.values():
+        entry_copy = entry.copy()
+        mins, sec = entry_copy['length'].split(':')
+        entry_copy['length'] = int(mins)*60 + int(sec)
+        entries.append(entry_copy)
+    
+    if request < 0:
+        entries.sort(key=lambda entry: entry['length'])
+    elif request >= 0:
+        entries.sort(key=lambda entry: entry['length'], reverse=True)
+    
+    # Prepare output
+    output = []
+    for entry in entries[:abs(request)]:
+        artists = ', '.join(entry['artists'])
+        title = entry['title']
+        length = entry['length']
+        output.append(f"{title} by {artists} ({length} seconds)")
+    return '\n'.join(output)
 
 def main():
 
@@ -101,13 +124,11 @@ def main():
         elif selection == 3:
             print(songs_by_artist())
         elif selection == 4:
-            songs_by_length()
+            print(songs_by_length())
         elif selection == 0:
             exit = True
         else:
             continue
 
-
-# Run Here
 main()
 
