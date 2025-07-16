@@ -57,16 +57,14 @@ def song_by_ranking():
 
 def songs_by_artist():
     artist_name = input(artist_question).strip().lower()
-    found = False
     ret = ""
     
     for rank, song in spotify.items():
         
         if any(artist_name in artist.lower() for artist in song["artists"]):
             ret += (f"{rank}: {song["title"]}\n")
-            found = True
     
-    if not found:
+    if not ret:
         return artist_error + artist_name.strip().title()
     
     return ret.strip()
