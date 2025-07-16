@@ -4,19 +4,14 @@
 
 spotify = {
     1: {"artists": ["ROSÉ", "Bruno Mars"], "title": "APT.", "length": "2:49"},
-    2: {"artists": ["Lady Gaga", "Bruno Mars"], "title": "Die With a Smile",
-        "length": "4:11"},
+    2: {"artists": ["Lady Gaga", "Bruno Mars"], "title": "Die With a Smile", "length": "4:11"},
     3: {"artists": ["Ed Sheeran"], "title": "Sapphire", "length": "2:59"},
-    4: {"artists": ["Billie Eilish"], "title": "Birds of a Feather",
-        "length": "3:30"},
-    5: {"artists": ["Benson Boone"], "title": "Beautiful Things",
-        "length": "3:00"},
-    6: {"artists": ["Sabrina Carpenter"], "title": "Manchild",
-        "length": "3:33"},
+    4: {"artists": ["Billie Eilish"], "title": "Birds of a Feather", "length": "3:30"},
+    5: {"artists": ["Benson Boone"], "title": "Beautiful Things", "length": "3:00"},
+    6: {"artists": ["Sabrina Carpenter"], "title": "Manchild", "length": "3:33"},
     7: {"artists": ["Alex Warren"], "title": "Ordinary", "length": "3:06"},
     8: {"artists": ["Billie Eilish"], "title": "Wildflower", "length": "4:21"},
-    9: {"artists": ["Sabrina Carpenter"], "title": "Espresso",
-        "length": "2:55"},
+    9: {"artists": ["Sabrina Carpenter"], "title": "Espresso", "length": "2:55"},
     10: {"artists": ["Lady Gaga"], "title": "Abracadabra", "length": "3:43"}
 }
 
@@ -40,76 +35,71 @@ length_value_error = "Invalid vallue. Please enter a number."
 def list_artists():
     artists = set()
     for entry in spotify.values(): 
-        for artist in entry["artists"]: 
-            artists.add(artist) 
-
-    return ', '.join(sorted(list(artists)))
+        artists.update(entry["artists"]) # Instead of looping through artists manually
+    return ', '.join(sorted(artists)) # no need to explicitly convert to list - sorted does this implicitly with sets
 
 def song_by_ranking():
     
     # Input (Validation)
     try:
-        request = int(input(ranking_question).strip())
+        rank = int(input(ranking_question).strip())
     except ValueError:
-        return ranking_value_error
+        return ranking_value_error # return the correct string, but let main() decide what to do with it
         
-    if (request > 10) or (request < 1):
-        return ranking_range_error
+    if (rank > 10) or (rank < 1): 
+        return ranking_range_error # return the correct string, but let main() decide what to do with it
     
-    entry = spotify[request]
+    entry = spotify[rank]
     artists = ', '.join(entry["artists"])
     title = entry["title"]
 
-    return f'{request}: {title} by {artists}'
+    return f'{rank}: {title} by {artists}'
 
 def songs_by_artist():
-    request = input(artist_question).lower()
-    songs = {}
-    for i in spotify:
-        entry = spotify[i]
-        for artist in entry["artists"]:
-            if artist.lower() == request:
-                songs[i] = entry["title"]
-                
-    if len(songs) == 0:
-        return artist_error + request.strip().title()
-    else:
-        return '\n'.join(f"{rank}: {title}" for rank, title in songs.items())
+    artist_name = input(artist_question).strip().lower()
+    found = False
+    ret = ""
+    
+    for rank, song in spotify.items():
+        
+        if any(artist_name in artist.lower() for artist in song["artists"]):
+            ret += (f"{rank}: {song["title"]}\n")
+            found = True
+    
+    if not found:
+        return artist_error + artist_name.strip().title()
+    
+    return ret.strip()
 
 def songs_by_length():
 
     # Input (Validation)
     try:
-        request = int(input(length_question).strip())
+        num_songs = int(input(length_question).strip())
     except ValueError:
         return length_value_error
     
-    entries = []
-    for entry in spotify.values():
-        entry_copy = entry.copy()
-        mins, sec = entry_copy['length'].split(':')
-        entry_copy['length'] = int(mins)*60 + int(sec)
-        entries.append(entry_copy)
+    def to_seconds(length_str):
+        minutes, seconds = map(int, length_str.split(":"))
+        return minutes * 60 + seconds
+
+    songs = []
+    for song in spotify.values():
+        total_seconds = to_seconds(song["length"])
+        songs.append((song["title"], song["artists"], total_seconds))
+        
+    songs.sort(key=lambda x: x[2], reverse=num_songs>0)
     
-    if request < 0:
-        entries.sort(key=lambda entry: entry['length'])
-    elif request >= 0:
-        entries.sort(key=lambda entry: entry['length'], reverse=True)
+    # prepare output
+    ret = ""
+    for title, artists, seconds in songs[:abs(num_songs)]:
+        ret += f"{title} by {', '.join(artists)} ({seconds} seconds)\n"
     
-    # Prepare output
-    output = []
-    for entry in entries[:abs(request)]:
-        artists = ', '.join(entry['artists'])
-        title = entry['title']
-        length = entry['length']
-        output.append(f"{title} by {artists} ({length} seconds)")
-    return '\n'.join(output)
+    return ret.strip()
 
 def main():
-
-    exit = False
     
-    while not exit:
+    while True:
 
         # Input (Validation)
         try:
@@ -126,7 +116,7 @@ def main():
         elif selection == 4:
             print(songs_by_length())
         elif selection == 0:
-            exit = True
+            break
         else:
             continue
 

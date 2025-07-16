@@ -77,7 +77,7 @@ def songs_by_length():
         total_seconds = to_seconds(song["length"])
         songs.append((song["title"], song["artists"], total_seconds))
 
-    songs.sort(key=lambda x: x[2], reverse=n > 0)
+    songs.sort(key=lambda x: x[2], reverse=n>0)
 
     for title, artists, seconds in songs[:abs(n)]:
         print(f"{title} by {', '.join(artists)} ({seconds} seconds)")
